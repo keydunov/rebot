@@ -1,0 +1,8 @@
+source "http://rubygems.org"
+
+gem "rebot"
+
+group :test do
+  gem "byebug"
+  gem "rspec"
+end
