@@ -1,0 +1,28 @@
+#!/usr/bin/env ruby
+require 'bundler'
+Bundler.setup
+
+require 'rebot'
+
+require "./<%= @bot_name %>"
+Dir[File.join(__dir__, 'conversations/*.rb')].each { |f| require f }
+
+Rebot.logger.level = Logger::INFO unless ENV['VERBOSE']
+
+#Create a new server
+server = Rebot::Server.new
+
+server.on_new_token do |token|
+  <%= @bot_class %>.new(token: token)
+end
+
+tokens = (ENV['TOKENS'] || "").split(",")
+if tokens.empty?
+  puts "Please create new bot at https://slack.com/apps/new/A0F7YS25R-bots"
+  puts "Add run TOKENS=first-token,second-token ./server"
+end
+tokens.each do |token|
+  server.add_token(token)
+end
+
+server.start
