@@ -2,7 +2,7 @@ module Rebot
   class Server
     attr_reader :queue
 
-    def initialize(queue: Rebot::RedisQueue.new)
+    def initialize(queue: nil)
       @queue = queue
       @bots = {}
       @new_token_proc = -> (token) { Rebot::BaseBot.new(token: token) }
@@ -18,14 +18,14 @@ module Rebot
         begin
           @running = true
           @bots.each { |key, bot| bot.start }
-          add_timers
+          listen_for_instructions if @queue
         rescue => e
           log_error(e)
         end
       end
     end
 
-    def add_timers
+    def listen_for_instructions
       EM.add_periodic_timer(1) do
         next_message = queue.pop
         process_instruction(next_message) if next_message
