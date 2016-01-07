@@ -123,11 +123,19 @@ module Rebot
 
     # extract into Conversation::Helpers
     def time
-      /\d{1,2}:\d{1,2}\s*(am|pm)/
+      /\d{1,2}:\d{1,2}\s*(am|pm)/i
     end
 
     def anything
-      /(.*)/
+      /(.*)/i
+    end
+
+    def yes
+      /^(yes|yea|yup|yep|ya|sure|ok|y|yeah|yah)/i
+    end
+
+    def no
+      /^(no|nah|nope|n)/i
     end
   end
 end
