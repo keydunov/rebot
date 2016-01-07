@@ -2,7 +2,7 @@ module Rebot
   class Server
     attr_reader :queue
 
-    def initialize(queue: SlackBotServer::LocalQueue.new)
+    def initialize(queue: Rebot::RedisQueue.new)
       @queue = queue
       @bots = {}
       @new_token_proc = -> (token) { Rebot::BaseBot.new(token: token) }

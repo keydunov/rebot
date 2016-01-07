@@ -1,4 +1,5 @@
 require 'slack'
+require 'logger'
 
 require "rebot/version"
 require "rebot/message"
