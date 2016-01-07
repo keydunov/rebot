@@ -21,23 +21,24 @@ Text `hi` to your new bot.
 
 ## Usage
 
+Rebot uses `conversations` to enable developers create complex text interactions.
 
 ```ruby
-hears /^hi|hello/i do
-    start_conversation do
-      say "Hi!"
-      say "How are you doing?"
-      say "Do you have any plans for a weekend?"
+hears /^(hi|hello)/i do
+  start_conversation do
+    say "Hi!"
+    say "How are you doing?"
+    say "Do you have any plans for a weekend?"
     
-      hears yes do
-        say "Nice! Hope you have a great weekend!"
-      end
-    
-      hears no do
-        say "Oh! Do you want to play with rebot framework?"
-        say "Check it out at https://github.com/keydunov/rebot"
-      end
+    hears yes do
+      say "Nice! Hope you have a great weekend!"
     end
+    
+    hears no do
+      say "Oh! Do you want to play with `rebot` framework?"
+      say "Check it out at https://github.com/keydunov/rebot"
+    end
+  end
 end
 ```
 
