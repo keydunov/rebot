@@ -1,4 +1,6 @@
 require 'slack'
+require 'logger'
+require 'faye/websocket'
 
 require "rebot/version"
 require "rebot/message"

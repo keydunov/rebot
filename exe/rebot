@@ -1,0 +1,5 @@
+#!/usr/bin/env ruby
+require "rebot"
+require "rebot/cli"
+
+Rebot::CLI.start ARGV

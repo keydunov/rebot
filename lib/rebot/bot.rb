@@ -91,7 +91,7 @@ module Rebot
 
       # TODO: it should be async
       rtm_start = @api.post('rtm.start')
-      @identitiy = Identity.new(rtm_start['self']['name'], rtm_start['self']['id'])
+      @identity = Identity.new(rtm_start['self']['name'], rtm_start['self']['id'])
       @ws = Faye::WebSocket::Client.new(rtm_start['url'], nil, ping: 60)
 
       @running = true
@@ -227,7 +227,7 @@ module Rebot
     private
 
     def handle_event(event)
-      data = MultiJson.load(event.data)
+      data = JSON.parse(event.data)
 
       # this is a confirmation of something we sent.
       return unless data['ok'].nil?
@@ -238,7 +238,7 @@ module Rebot
         # Ignore messages from slackbot
         return if data['user'] == "USLACKBOT" || data['username'] == 'slackbot'
         # message without text is probably an edit
-        return if data['text'].blank?
+        return if data['text'].nil?
 
         message = Message.new(data, self)
         @last_received_message = message

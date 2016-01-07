@@ -28,7 +28,7 @@ module Rebot
     def resolve_event(type)
       if @data['text'] =~ @mention_regex
         type = 'mention'
-      elsif @data['channel'].starts_with?("D")
+      elsif @data['channel'].match(/^D/)
         type = 'dm'
       end
       type
