@@ -2,14 +2,11 @@
 
 Rebot is a framework for building bots application.
 
-## Installation
-
-    $ gem install rebot
-
 ## Getting started
 
 Create new app
 
+    $ gem install rebot
     $ rebot new my_bot
 
 Create new slack bot integration at (http://slack.com/services)[http://slack.com/services] and copy token.
