@@ -12,7 +12,7 @@ Create new app
 
     $ rebot new my_bot
 
-Create new bot slack bot integration at (http://slack.com/services)[http://slack.com/services] and copy token.
+Create new slack bot integration at (http://slack.com/services)[http://slack.com/services] and copy token.
 
     $ cd my_bot
     $ TOKENS=token-your-copied-from-slack ./server
