@@ -6,7 +6,7 @@ Rebot is a framework for building bots application.
 
     $ gem install rebot
 
-## Usage
+## Getting started
 
 Create new app
 
@@ -18,6 +18,28 @@ Create new slack bot integration at (http://slack.com/services)[http://slack.com
     $ TOKENS=token-your-copied-from-slack ./server
 
 Text `hi` to your new bot.
+
+## Usage
+
+
+```ruby
+hears /^hi|hello/i do
+    start_conversation do
+      say "Hi!"
+      say "How are you doing?"
+      say "Do you have any plans for a weekend?"
+    
+      hears yes do
+        say "Nice! Hope you have a great weekend!"
+      end
+    
+      hears no do
+        say "Oh! Do you want to play with rebot framework?"
+        say "Check it out at https://github.com/keydunov/rebot"
+      end
+    end
+end
+```
 
 ## Development
 
