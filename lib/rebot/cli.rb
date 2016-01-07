@@ -20,7 +20,7 @@ module Rebot
     private
 
     def camel_case(string)
-      return string.gsub(/^./) { |l| l.capitalize } if !match(/[_-]/)
+      return string.gsub(/^./) { |l| l.capitalize } if !string.match(/[_-]/)
       altered_string = string.downcase.capitalize
       altered_string.scan(/[_-][a-zA-Z]/).each do |match|
         altered_string.gsub!(match, match[1].upcase)
