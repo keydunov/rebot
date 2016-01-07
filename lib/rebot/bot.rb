@@ -91,7 +91,7 @@ module Rebot
 
       # TODO: it should be async
       rtm_start = @api.post('rtm.start')
-      @identitiy = Identity.new(rtm_start['self']['name'], rtm_start['self']['id'])
+      @identity = Identity.new(rtm_start['self']['name'], rtm_start['self']['id'])
       @ws = Faye::WebSocket::Client.new(rtm_start['url'], nil, ping: 60)
 
       @running = true
