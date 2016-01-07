@@ -6,23 +6,20 @@ TODO: Delete this and the text above, and describe your gem
 
 ## Installation
 
-Add this line to your application's Gemfile:
-
-```ruby
-gem 'rebot'
-```
-
-And then execute:
-
-    $ bundle
-
-Or install it yourself as:
-
     $ gem install rebot
 
 ## Usage
 
-TODO: Write usage instructions here
+Create new app
+
+    $ rebot new my_bot
+
+Create new bot slack bot integration at (http://slack.com/services)[http://slack.com/services] and copy token.
+
+    $ cd my_bot
+    $ TOKENS=token-your-copied-from-slack ./server
+
+Text `hi` to your new bot.
 
 ## Development
 
