@@ -237,7 +237,7 @@ module Rebot
         # Ignore messages from slackbot
         return if data['user'] == "USLACKBOT" || data['username'] == 'slackbot'
         # message without text is probably an edit
-        return if data['text'].blank?
+        return if data['text'].nil?
 
         message = Message.new(data, self)
         @last_received_message = message
