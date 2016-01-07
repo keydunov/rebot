@@ -173,6 +173,7 @@ module Rebot
 
       def hears(pattern, &block)
         callback = Proc.new do |message|
+          pattern = pattern.is_a?(String) ? Regexp.new(pattern, true) : pattern
           if match_data = pattern.match(message.text)
             debug "I heard #{pattern}"
             instance_exec(message, *match_data.captures, &block)
