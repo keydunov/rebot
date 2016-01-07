@@ -34,7 +34,7 @@ module Rebot
 
     def add_bot(bot)
       # Do not add bot same bot twice
-      return if @bots[bot.token].present?
+      return if @bots[bot.token]
       log "adding bot #{bot}"
       @bots[bot.token] = bot
       bot.start if @running
