@@ -68,7 +68,7 @@ module Rebot
         @last_active_at = Time.now
       end
 
-      if @messages.blank? && @handlers_stack.last.empty?
+      if @messages.empty? && @handlers_stack.last.empty?
         @status = :completed
         @bot.conversation_ended(self)
       end
@@ -93,7 +93,7 @@ module Rebot
         end
       else
         # FIXME
-        say(@sent.last) if @messages.blank?
+        say(@sent.last) if @messages.empty?
       end
     end
 
