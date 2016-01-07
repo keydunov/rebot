@@ -226,7 +226,7 @@ module Rebot
     private
 
     def handle_event(event)
-      data = MultiJson.load(event.data)
+      data = JSON.parse(event.data)
 
       # this is a confirmation of something we sent.
       return unless data['ok'].nil?

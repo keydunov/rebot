@@ -11,7 +11,7 @@ module Rebot
     end
 
     def push(value)
-      @redis.rpush @key, MultiJson.dump(value)
+      @redis.rpush @key, JSON.dump(value)
     end
 
     def pop
