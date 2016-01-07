@@ -8,7 +8,7 @@ Rebot.conversation :hello do
   end
 
   hears no do
-    say "Oh! Do you want to play with rebot framework"
+    say "Oh! Do you want to play with rebot framework?"
     say "Check it out at https://github.com/keydunov/rebot"
   end
 end

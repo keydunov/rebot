@@ -6,5 +6,4 @@ class <%= @bot_class %> < Rebot::Bot
   hears /^(hi|hello)/i do
     start_conversation :hello
   end
-
 end
