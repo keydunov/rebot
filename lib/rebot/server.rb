@@ -70,12 +70,14 @@ module Rebot
         remove_bot(token)
       when :say
         token, message_data = args
-        bot = @bots[token]
-        bot.say(message_data)
+        if bot = @bots[token]
+          bot.say(message_data)
+        end
       when :call
         token, method, method_args = args
-        bot = @bots[token]
-        bot.call(method, method_args)
+        if bot = @bots[token]
+          bot.call(method, method_args)
+        end
       else
         log unknown_command: instruction
       end

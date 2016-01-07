@@ -233,7 +233,9 @@ module Rebot
 
       if data['type'] == 'message'
         return if data['user'] == auth_test['user_id']
-        return if data['user'] == "USLACKBOT"
+
+        # Ignore messages from slackbot
+        return if data['user'] == "USLACKBOT" || data['username'] == 'slackbot'
         # message without text is probably an edit
         return if data['text'].blank?
 
