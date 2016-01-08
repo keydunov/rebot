@@ -102,13 +102,8 @@ module Rebot
       end
 
       @ws.on :message do |event|
-        begin
-          debug event.data
-          handle_event(event)
-        rescue => e
-          log error: e
-          log backtrace: e.backtrace
-        end
+        debug event.data
+        handle_event(event)
       end
 
       @ws.on :close do |event|
