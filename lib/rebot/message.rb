@@ -3,11 +3,9 @@ module Rebot
     attr_reader :text, :user, :channel, :event
 
     def initialize(data, bot)
-      @bot     = bot
       @data    = data
 
-      # FIXME: calling private method
-      @mention_regex = /\A(<@#{@bot.send(:user_id)}>)[\s\:](.*)/
+      @mention_regex = /\A(<@#{bot.identity.id}>)[\s\:](.*)/
 
       @event   = resolve_event(data['type'])
       @text    = cleanup_text(data['text'])

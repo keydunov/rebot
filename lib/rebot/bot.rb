@@ -72,7 +72,7 @@ module Rebot
       elsif text_or_options.is_a?(Hash)
         options = text_or_options.merge(channel: channel)
       else
-        raise "unreachable"
+        raise ArgumentError
       end
 
       say(options)
@@ -89,7 +89,6 @@ module Rebot
         return
       end
 
-      # TODO: it should be async
       rtm_start = @api.post('rtm.start')
       @identity = Identity.new(rtm_start['self']['name'], rtm_start['self']['id'])
       @ws = Faye::WebSocket::Client.new(rtm_start['url'], nil, ping: 60)
@@ -109,7 +108,6 @@ module Rebot
         rescue => e
           log error: e
           log backtrace: e.backtrace
-          Rollbar.error(e)
         end
       end
 
