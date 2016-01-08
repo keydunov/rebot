@@ -1,7 +1,7 @@
 # Rebot
 
 Rebot is a framework for building bots application.
-Rebot was extracted from (brobot.io)[http://brobot.io] and inspired by awesome node.js (botkit)[https://github.com/howdyai/botkit] library. 
+Rebot was extracted from [brobot.io](http://brobot.io) and inspired by awesome node.js [botkit](https://github.com/howdyai/botkit) library. 
 
 ## Getting started
 
@@ -10,7 +10,7 @@ Create new app
     $ gem install rebot
     $ rebot new my_bot
 
-Create new slack bot integration at (http://slack.com/services)[http://slack.com/services] and copy token.
+Create new slack bot integration at [http://slack.com/services](http://slack.com/services) and copy token.
 
     $ cd my_bot
     $ TOKENS=token-your-copied-from-slack ./server
