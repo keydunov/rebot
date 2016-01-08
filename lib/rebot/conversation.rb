@@ -3,7 +3,7 @@ module Rebot
     DEFAULT_TIMEOUT = 180 # set default timeout to 180 seconds (3 minutes)
     DEFAULT_TIMEOUT_MESSAGE = "We can pick this up later."
 
-    attr_reader :data, :source_message
+    attr_reader :data, :source_message, :bot
 
     def initialize(bot, source_message)
       @bot            = bot
