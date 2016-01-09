@@ -15,26 +15,27 @@ module Rebot
       @messages       = []
       @sent           = []
       @last_active_at = Time.now
-
-      @timeout         = DEFAULT_TIMEOUT
-      @timeout_message = DEFAULT_TIMEOUT_MESSAGE
-      @stop_patterns   = DEFAULT_STOP_PATTERNS
-      @stop_message    = DEFAULT_STOP_MESSAGE
     end
 
-    def stop_on(patterns)
-      if patterns.is_a?(String)
-        @stop_patterns = patterns.split(",")
+    def stop_patterns(value = nil)
+      if value
+        if value.is_a?(String)
+          @stop_patterns = value.split(",")
+        elsif value.is_a?(Array)
+          @stop_patterns = value
+        else
+          raise TypeError
+        end
       else
-        @stop_patterns = patterns
+        @stop_patterns ||= DEFAULT_STOP_PATTERNS
       end
     end
 
-    def stop_message(value)
+    def stop_message(value = nil)
       if value
         @stop_message = value
       else
-        @stop_message
+        @stop_message ||= DEFAULT_STOP_MESSAGE
       end
     end
 
@@ -42,7 +43,7 @@ module Rebot
       if value
         @timeout = value
       else
-        @timeout
+        @timeout ||= DEFAULT_TIMEOUT
       end
     end
 
@@ -50,7 +51,7 @@ module Rebot
       if value
         @timeout_message = value
       else
-        @timeout_message
+        @timeout_message ||= DEFAULT_TIMEOUT_MESSAGE
       end
     end
 
@@ -101,7 +102,7 @@ module Rebot
       end
 
       if Time.now - @last_active_at > timeout
-        # TODO: keep it simple for now
+        # Keep it simple for now
         @status = :timeout
         @bot.say(text: timeout_message, channel: @source_message.channel)
         @bot.conversation_ended(self)
@@ -111,8 +112,9 @@ module Rebot
     def handle(message)
       @last_active_at = Time.now
       Rebot.logger.debug "Handling message in conversation: #{message.text}"
-      if @stop_patterns.any? { |sp| message.text.match(Regexp.new(sp, true)) }
-        say(text: @stop_message, action: "stop")
+
+      if stop_patterns.any? { |sp| message.text.match(Regexp.new(sp, true)) }
+        say(text: stop_message, action: "stop")
         return
       end
 

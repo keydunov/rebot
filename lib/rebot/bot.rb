@@ -72,7 +72,7 @@ module Rebot
       elsif text_or_options.is_a?(Hash)
         options = text_or_options.merge(channel: channel)
       else
-        raise ArgumentError
+        raise TypeError
       end
 
       say(options)
@@ -143,10 +143,12 @@ module Rebot
       convo = Conversation.new(self, @last_received_message)
       @convos.push(convo)
       convo.start(convo_block, *args)
+      Rebot.logger.debug "> [Start] Conversation with #{convo.source_message.user} in #{convo.source_message.channel}"
     end
 
     def conversation_ended(convo)
       @convos.delete(convo)
+      Rebot.logger.debug "> [End] Conversation with #{convo.source_message.user} in #{convo.source_message.channel}"
     end
 
     class << self
