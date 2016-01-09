@@ -2,6 +2,8 @@ module Rebot
   class Conversation
     DEFAULT_TIMEOUT = 180 # set default timeout to 180 seconds (3 minutes)
     DEFAULT_TIMEOUT_MESSAGE = "We can pick this up later."
+    DEFAULT_STOP_PATTERNS = ["^exit", "^stop", "^quit"]
+    DEFAULT_STOP_MESSAGE  = "Ok. Done"
 
     attr_reader :data, :source_message, :bot
 
@@ -14,8 +16,26 @@ module Rebot
       @sent           = []
       @last_active_at = Time.now
 
-      @timeout = DEFAULT_TIMEOUT
+      @timeout         = DEFAULT_TIMEOUT
       @timeout_message = DEFAULT_TIMEOUT_MESSAGE
+      @stop_patterns   = DEFAULT_STOP_PATTERNS
+      @stop_message    = DEFAULT_STOP_MESSAGE
+    end
+
+    def stop_on(patterns)
+      if patterns.is_a?(String)
+        @stop_patterns = patterns.split(",")
+      else
+        @stop_patterns = patterns
+      end
+    end
+
+    def stop_message(value)
+      if value
+        @stop_message = value
+      else
+        @stop_message
+      end
     end
 
     def timeout(value = nil)
@@ -66,6 +86,13 @@ module Rebot
         @bot.say(message)
         @sent.push(message)
         @last_active_at = Time.now
+
+        if action = message[:action]
+          if action == 'stop'
+            @status = :stopped
+            @bot.conversation_ended(self)
+          end
+        end
       end
 
       if @messages.empty? && @handlers_stack.last.empty?
@@ -84,6 +111,11 @@ module Rebot
     def handle(message)
       @last_active_at = Time.now
       Rebot.logger.debug "Handling message in conversation: #{message.text}"
+      if @stop_patterns.any? { |sp| message.text.match(Regexp.new(sp, true)) }
+        say(text: @stop_message, action: "stop")
+        return
+      end
+
       if option = matched_option(message.text)
         @handlers_stack.push([])
         if option[:default]
