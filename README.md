@@ -1,7 +1,7 @@
 # Rebot
 
 Rebot is a framework for building bots application.
-Rebot was extracted from [brobot.io](http://brobot.io) and inspired by awesome node.js [botkit](https://github.com/howdyai/botkit) library. 
+Rebot was extracted from [brobot.io](http://brobot.io) and inspired by awesome node.js [botkit](https://github.com/howdyai/botkit) library and [slack-bot-server]( https://github.com/exciting-io/slack-bot-server)
 
 ## Getting started
 
