@@ -1,14 +1,14 @@
 require 'slack'
 require 'logger'
-require 'faye/websocket'
+
+require 'slack_bot_server'
+require 'slack_bot_server/redis_queue'
 
 require "rebot/version"
 require "rebot/message"
 require "rebot/bot"
-require "rebot/server"
 require "rebot/conversation"
-require "rebot/redis_queue"
-require "rebot/remote_control"
+
 
 module Rebot
   def self.logger

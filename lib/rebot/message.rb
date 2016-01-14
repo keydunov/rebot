@@ -5,7 +5,7 @@ module Rebot
     def initialize(data, bot)
       @data    = data
 
-      @mention_regex = /\A(<@#{bot.identity.id}>)[\s\:](.*)/
+      @mention_regex = /\A(<@#{bot.bot_user_id}>)[\s\:](.*)/
 
       @event   = resolve_event(data['type'])
       @text    = cleanup_text(data['text'])

@@ -8,11 +8,13 @@ require "./<%= @bot_name %>"
 Dir[File.join(__dir__, 'conversations/*.rb')].each { |f| require f }
 
 Rebot.logger.level = Logger::INFO unless ENV['VERBOSE']
+SlackBotServer.logger = Rebot.logger
 
 #Create a new server
-server = Rebot::Server.new
+queue = SlackBotServer::RedisQueue.new(key: '<%= @bot_name %>:queue')
+server = SlackBotServer::Server.new(queue: queue)
 
-server.on_new_token do |token|
+server.on_add do |token|
   <%= @bot_class %>.new(token: token)
 end
 
@@ -22,7 +24,7 @@ if tokens.empty?
   puts "Add run TOKENS=first-token,second-token ./server"
 end
 tokens.each do |token|
-  server.add_token(token)
+  server.add_bot(token)
 end
 
 server.start
