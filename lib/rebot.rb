@@ -27,4 +27,8 @@ module Rebot
       raise "Cannot find conversation: #{name}"
     end
   end
+
+  def self.server
+    @server ||= SlackBotServer::Server.new(queue: SlackBotServer::RedisQueue.new)
+  end
 end
