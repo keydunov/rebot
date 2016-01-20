@@ -2,9 +2,6 @@ module Rebot
   class Bot < SlackBotServer::Bot
     def initialize(token:, key: nil)
       super
-
-      @group_ids      = []
-      @ims            = []
       @convos         = []
     end
 
@@ -16,6 +13,13 @@ module Rebot
       else
         super(text_or_options)
       end
+    end
+
+    # Allow to not specify text option
+    # Usefull for sending attachments only
+    def say(options)
+      options[:text] ||= ""
+      super(options)
     end
 
     def start
