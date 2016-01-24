@@ -9,7 +9,6 @@ require "rebot/message"
 require "rebot/bot"
 require "rebot/conversation"
 
-
 module Rebot
   def self.logger
     @logger ||= Logger.new(STDOUT)
@@ -30,5 +29,12 @@ module Rebot
 
   def self.server
     @server ||= SlackBotServer::Server.new(queue: SlackBotServer::RedisQueue.new)
+  end
+
+  def self.remote_control
+    @remote_control ||= begin
+      require 'slack_bot_server/remote_control'
+      SlackBotServer::RemoteControl.new(queue: SlackBotServer::RedisQueue.new)
+    end
   end
 end

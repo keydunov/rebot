@@ -1,18 +1,22 @@
 module Rebot
   class Bot < SlackBotServer::Bot
+
     def initialize(token:, key: nil)
       super
       @convos         = []
     end
 
-    # SlackBotServer::Bot only supports calling this with options;
-    # the equivalent would be `reply(text: text_or_options)`
+    def default_message_options
+      { type: "message", as_user: true }
+    end
+
     def reply(text_or_options)
       if text_or_options.is_a?(String)
-        super(text: text_or_options)
+        options = { text: text_or_options }
       else
-        super(text_or_options)
+        options = text_or_options
       end
+      say(options.merge(channel: @last_received_message.channel))
     end
 
     # Allow to not specify text option
@@ -20,6 +24,10 @@ module Rebot
     def say(options)
       options[:text] ||= ""
       super(options)
+    end
+
+    def typing(options = {})
+      super({ channel: @last_received_message.channel }.merge(options))
     end
 
     def start
@@ -103,6 +111,13 @@ module Rebot
 
     def ignorable_slack_event?(data)
       bot_message?(data) || data['text'].nil?
+    end
+
+    def bot_message?(data)
+      data['subtype'] == 'bot_message' ||
+      data['user'] == SLACKBOT_USER_ID ||
+      (data['user'] == bot_user_id && data['subtype'].nil?) ||
+      change_to_previous_bot_message?(data)
     end
 
     def find_conversation(message)

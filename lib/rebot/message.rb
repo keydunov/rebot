@@ -4,13 +4,14 @@ module Rebot
 
     def initialize(data, bot)
       @data    = data
+      @bot     = bot
 
       @mention_regex = /\A(<@#{bot.bot_user_id}>)[\s\:](.*)/
 
-      @event   = resolve_event(data['type'])
-      @text    = cleanup_text(data['text'])
       @user    = data['user']
       @channel = data['channel']
+      @event   = resolve_event(data['type'])
+      @text    = cleanup_text(data['text'])
     end
 
     def []=(key, value)
@@ -24,12 +25,29 @@ module Rebot
     private
 
     def resolve_event(type)
-      if @data['text'] =~ @mention_regex
-        type = 'mention'
+      # set up a couple of special cases based on subtype
+      if @data['subtype'] == 'channel_join'
+        if @data['user'] == @bot.bot_user_id
+          "bot_channel_join"
+        else
+          "user_channel_join"
+        end
+      elsif @data['subtype'] == 'group_join'
+        if @data['user'] == @bot.bot_user_id
+          "bot_group_join"
+        else
+          "bot_group_join"
+        end
+      elsif @data['subtype']
+        @data['subtype']
+
       elsif @data['channel'].match(/^D/)
-        type = 'dm'
+        'dm'
+      elsif @data['text'] =~ @mention_regex
+        'mention'
+      else
+        "ambient"
       end
-      type
     end
 
     def cleanup_text(text)
