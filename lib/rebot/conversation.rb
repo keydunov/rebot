@@ -141,7 +141,7 @@ module Rebot
     end
 
     def hears(pattern, meta = {}, &callback)
-      pattern = Regexp.new(pattern) if pattern.is_a?(String)
+      pattern = Regexp.new(pattern, true) if pattern.is_a?(String)
       @handlers_stack.last.push(
         { pattern: pattern, callback: callback }.merge(meta)
       )
