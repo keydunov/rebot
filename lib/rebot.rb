@@ -5,9 +5,14 @@ require 'slack_bot_server'
 require 'slack_bot_server/redis_queue'
 
 require "rebot/version"
+
+require "rebot/configuration"
+require "rebot/server"
 require "rebot/message"
 require "rebot/bot"
 require "rebot/conversation"
+
+require 'rebot/backends/relax'
 
 module Rebot
   def self.logger
@@ -27,8 +32,16 @@ module Rebot
     end
   end
 
+  def self.configure
+    yield(configuration)
+  end
+
+  def self.configuration
+    @configuration ||= Configuration.new
+  end
+
   def self.server
-    @server ||= SlackBotServer::Server.new(queue: SlackBotServer::RedisQueue.new)
+    @server ||= Server.setup(configuration.compile)
   end
 
   def self.remote_control
