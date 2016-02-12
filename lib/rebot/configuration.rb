@@ -1,14 +1,16 @@
 module Rebot
   class Configuration
     # Adapter to use, currently supported: slack_bot_server and relax
-    attr_accessor :adapter
-    attr_accessor :adapter_options
+    attr_reader :adapter_options
 
     # Bot class
-    attr_accessor :bot_class
+    attr_reader :bot_class
+
+    attr_reader :queue
 
     # TODO: validate adapters
     def initialize
+      @queue           = SlackBotServer::RedisQueue.new
       @adapter         = :slack_bot_server
       @adapter_options = {}
       @bot_class       = Rebot::Bot

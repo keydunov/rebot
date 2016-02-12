@@ -2,7 +2,7 @@ module Rebot
   module Backends
     class Relax
       def initialize(config)
-        @queue = nil # TODO
+        @queue = config.queue
         @bots = {}
         @add_proc = -> (token) { SlackBotServer::SimpleBot.new(token: token) }
         @running = false
@@ -29,11 +29,12 @@ module Rebot
         @add_proc = block
       end
 
-      def add_bot(token, team_id, options = {})
-        bot = @add_proc.call(token, team_id, options)
-        # TODO: Хранить хэш ботов не в памяти а в редисе
-        if !@bots[bot.key]
-          Rebot.logger.info "Adding bot #{bot}"
+      def add_bot(token, team_id)
+        if @bots[token.to_sym]
+          Rebot.logger.warn "Attempt to add already added bot with token: #{token}"
+        else
+          bot = @add_proc.call(token, team_id)
+          Rebot.logger.info "Adding bot with token: #{bot.key}"
           @bots[bot.key.to_sym] = bot
           redis.multi do
             redis.hset(@relax_bots_key, bot.team_id, {team_id: bot.team_id, token: bot.token}.to_json)
@@ -61,6 +62,7 @@ module Rebot
             if event_json
               event = JSON.parse(event_json)
               if bot = bots(event['team_uid'])
+                Rebot.logger.info "Received message for bot: #{bot}: #{event}"
 
                 # Normalize event format
                 if event['type'] == 'message_new'
@@ -82,7 +84,7 @@ module Rebot
       def listen_for_instructions
         EM.add_periodic_timer(1) do
           begin
-            next_message = queue.pop
+            next_message = @queue.pop
             process_instruction(next_message) if next_message
           rescue => e
             # TODO
@@ -95,7 +97,6 @@ module Rebot
         type, *args = instruction
         bot_key = args.shift
         if type.to_sym == :add_bot
-          log "adding bot: #{bot_key} #{args.inspect}"
           add_bot(bot_key, *args)
         else
           log unknown_command: instruction
