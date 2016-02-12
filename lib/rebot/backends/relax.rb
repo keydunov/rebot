@@ -76,7 +76,7 @@ module Rebot
             end
           rescue => e
             # TODO
-            raise e
+            log_error(e)
           end
         end
       end
@@ -87,6 +87,7 @@ module Rebot
             next_message = @queue.pop
             process_instruction(next_message) if next_message
           rescue => e
+            log_error(e)
             # TODO
             raise e
           end
@@ -99,8 +100,13 @@ module Rebot
         if type.to_sym == :add_bot
           add_bot(bot_key, *args)
         else
-          log unknown_command: instruction
+          Rebot.logger.warn("Unknown command sent via remote control: #{instruction}")
         end
+      end
+
+      def log_error(e)
+        Rebot.logger.warn("Error in server: #{e} - #{e.message}")
+        Rebot.logger.warn(e.backtrace.join("\n"))
       end
 
       def redis
