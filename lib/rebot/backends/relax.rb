@@ -12,6 +12,11 @@ module Rebot
         @relax_events_queue = config.adapter_options[:relax_events_queue]
       end
 
+      def next_message_id
+        @next_message_id ||= 0
+        @next_message_id += 1
+      end
+
       def start
         EM.run do
           @running = true
@@ -44,6 +49,10 @@ module Rebot
       rescue => e
         # TODO:
         raise e
+      end
+
+      def message(team_id, message)
+        redis.publish(@relax_bots_pubsub, {type: 'message', team_id: team_id, payload: message.merge(id: next_message_id).to_json}.to_json)
       end
 
       private
