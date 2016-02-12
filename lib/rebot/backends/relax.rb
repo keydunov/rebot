@@ -89,13 +89,46 @@ module Rebot
 
       def process_instruction(instruction)
         type, *args = instruction
-        Rebot.logger.info("Received remote instruction: #{instruction} with arguments: #{args}")
+        Rebot.logger.info("Received remote instruction: #{type} with arguments: #{args}")
         bot_key = args.shift
         if type.to_sym == :add_bot
           add_bot(bot_key, *args)
         else
-          Rebot.logger.warn("Unknown command: #{instruction}")
+          with_bot(bot_key) do |bot|
+            case type.to_sym
+            when :remove_bot
+              remove_bot(bot_key)
+            when :broadcast
+              log "[#{bot_key}] broadcast: #{args}"
+              bot.broadcast(*args)
+            when :say
+              Rebot.logger.info "[#{bot_key}] say: #{args}"
+              bot.say(*args)
+            when :say_to
+              user_id, message_data = args
+              log "[#{bot_key}] say_to: (#{user_id}) #{message_data}"
+              bot.say_to(user_id, message_data)
+            when :call
+              method, method_args = args
+              bot.call(method, method_args)
+            else
+              log unknown_command: instruction
+              Rebot.logger.warn("Unknown command: #{instruction}")
+            end
+          end
         end
+      end
+
+      def with_bot(key)
+        if bot = bot(key)
+          yield bot
+        else
+          log("Unknown bot: #{key}")
+        end
+      end
+
+      def bot(key)
+        @bots[key.to_sym]
       end
 
       def normalize_event_format(event)
