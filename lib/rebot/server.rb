@@ -3,8 +3,8 @@ module Rebot
   class Server
     def self.setup(config)
       backend = init_backend(config)
-      backend.on_add do |token, team|
-        config.bot_class.new(token: token, team_id: team)
+      backend.on_add do |token, team, options|
+        config.bot_class.new(token: token, team_id: team, options: options)
       end
       backend
     end

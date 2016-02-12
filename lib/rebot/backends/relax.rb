@@ -17,6 +17,11 @@ module Rebot
           @running = true
           listen_for_relax_events
           listen_for_instructions if @queue
+
+          # TODO
+          EM.add_periodic_timer(1) do
+            @bots.values.each { |b| b.convos.each { |convo| convo.tick } }
+          end
         end
       end
 
@@ -24,8 +29,8 @@ module Rebot
         @add_proc = block
       end
 
-      def add_bot(token, team_id)
-        bot = @add_proc.call(token, team_id)
+      def add_bot(token, team_id, options = {})
+        bot = @add_proc.call(token, team_id, options)
         # TODO: Хранить хэш ботов не в памяти а в редисе
         if !@bots[bot.key]
           Rebot.logger.info "Adding bot #{bot}"
@@ -42,14 +47,30 @@ module Rebot
 
       private
 
+      def bots(team_uid)
+        json_bot = redis.hget(@relax_bots_key, team_uid)
+        if json_bot
+          @bots[JSON.parse(json_bot)["token"].to_sym]
+        end
+      end
+
       def listen_for_relax_events
         EM.add_periodic_timer(1) do
           begin
-            queue_name, event_json = redis.blpop(@relax_events_queue)
-            if queue_name == @relax_events_queue
-              #event = Event.new(JSON.parse(event_json))
+            event_json = redis.lpop(@relax_events_queue)
+            if event_json
               event = JSON.parse(event_json)
-              puts event
+              if bot = bots(event['team_uid'])
+
+                # Normalize event format
+                if event['type'] == 'message_new'
+                  event['type'] = 'message'
+                end
+                event['user']    = event['user_uid']
+                event['channel'] = event['channel_uid']
+
+                bot.send(:run_callbacks, event['type'], event)
+              end
             end
           rescue => e
             # TODO
@@ -67,6 +88,17 @@ module Rebot
             # TODO
             raise e
           end
+        end
+      end
+
+      def process_instruction(instruction)
+        type, *args = instruction
+        bot_key = args.shift
+        if type.to_sym == :add_bot
+          log "adding bot: #{bot_key} #{args.inspect}"
+          add_bot(bot_key, *args)
+        else
+          log unknown_command: instruction
         end
       end
 

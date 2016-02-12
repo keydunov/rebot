@@ -1,9 +1,9 @@
 module Rebot
   class Bot < SlackBotServer::Bot
 
-    attr_reader :team_id
+    attr_reader :team_id, :convos
 
-    def initialize(token:, team_id: nil, key: nil)
+    def initialize(token:, team_id: nil, options: {})
       super(token: token, key: nil)
       @team_id = team_id
       @convos  = []
@@ -35,7 +35,10 @@ module Rebot
 
     def start
       super
+      schedule_conversations
+    end
 
+    def schedule_conversations
       EM.add_periodic_timer(1) do
         @convos.each { |convo| convo.tick }
       end
