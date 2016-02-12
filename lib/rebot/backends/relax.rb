@@ -123,7 +123,7 @@ module Rebot
         if bot = bot(key)
           yield bot
         else
-          log("Unknown bot: #{key}")
+          Rebot.logger.warn("Unknown bot: #{key}")
         end
       end
 
