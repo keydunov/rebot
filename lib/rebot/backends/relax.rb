@@ -62,15 +62,8 @@ module Rebot
             if event_json
               event = JSON.parse(event_json)
               if bot = bots(event['team_uid'])
-                Rebot.logger.info "Received message for bot: #{bot}: #{event}"
-
-                # Normalize event format
-                if event['type'] == 'message_new'
-                  event['type'] = 'message'
-                end
-                event['user']    = event['user_uid']
-                event['channel'] = event['channel_uid']
-
+                Rebot.logger.debug "Received message for bot: #{bot}: #{event}"
+                event = normalize_event_format(event)
                 bot.send(:run_callbacks, event['type'], event)
               end
             end
@@ -96,12 +89,24 @@ module Rebot
 
       def process_instruction(instruction)
         type, *args = instruction
+        Rebot.logger.info("Received remote instruction: #{instruction} with arguments: #{args}")
         bot_key = args.shift
         if type.to_sym == :add_bot
           add_bot(bot_key, *args)
         else
-          Rebot.logger.warn("Unknown command sent via remote control: #{instruction}")
+          Rebot.logger.warn("Unknown command: #{instruction}")
         end
+      end
+
+      def normalize_event_format(event)
+        if event['type'] == 'message_new'
+          event['type'] = 'message'
+        end
+
+        event['user']    = event['user_uid']
+        event['channel'] = event['channel_uid']
+
+        event
       end
 
       def log_error(e)
