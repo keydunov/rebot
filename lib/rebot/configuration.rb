@@ -35,9 +35,7 @@ module Rebot
 
     def compile
       if self.adapter == :relax
-        self.adapter_options[:relax_bots_pubsub]  ||= "relax_bots_pubsub"
-        self.adapter_options[:relax_bots_key]     ||= "relax_bots_key"
-
+        self.adapter_options[:bots_key]       ||= "relax_bots_key"
         self.adapter_options[:incoming_queue] ||= "rebot_incoming_queue"
         self.adapter_options[:outgoing_queue] ||= "rebot_outgoing_queue"
       end

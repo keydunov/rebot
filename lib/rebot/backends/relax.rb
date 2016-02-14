@@ -7,11 +7,9 @@ module Rebot
         @add_proc = -> (token) { SlackBotServer::SimpleBot.new(token: token) }
         @running = false
 
-        @relax_bots_pubsub  = config.adapter_options[:relax_bots_pubsub]
-        @relax_bots_key     = config.adapter_options[:relax_bots_key]
-
-        @incoming_queue  = config.adapter_options[:incoming_queue]
-        @outgoing_queue  = config.adapter_options[:outgoing_queue]
+        @bots_key       = config.adapter_options[:bots_key]
+        @incoming_queue = config.adapter_options[:incoming_queue]
+        @outgoing_queue = config.adapter_options[:outgoing_queue]
       end
 
       def start
@@ -39,8 +37,8 @@ module Rebot
           Rebot.logger.info "Adding bot with token: #{bot.key}"
           @bots[bot.key.to_sym] = bot
           redis.multi do
-            redis.hset(@relax_bots_key, bot.team_id, {team_id: bot.team_id, token: bot.token}.to_json)
-            redis.publish(@relax_bots_pubsub, {type: 'team_added', team_id: bot.team_id}.to_json)
+            redis.hset(@bots_key, bot.token, { team_id: bot.team_id, token: bot.token }.to_json)
+            redis.rpush(@outgoing_queue, { type: 'team_added', team_id: bot.team_id }.to_json)
           end
         end
       rescue => e
