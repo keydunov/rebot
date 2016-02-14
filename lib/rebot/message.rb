@@ -26,7 +26,9 @@ module Rebot
 
     def resolve_event(type)
       # set up a couple of special cases based on subtype
-      if @data['subtype'] == 'channel_join'
+      if @data['event']
+        @data['event']
+      elsif @data['subtype'] == 'channel_join'
         if @data['user'] == @bot.bot_user_id
           "bot_channel_join"
         else

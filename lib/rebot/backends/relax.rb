@@ -62,6 +62,7 @@ module Rebot
               event = JSON.parse(event_json)
               if bot = @bots[event['token'].to_sym]
                 Rebot.logger.debug "Received message for bot: #{bot}: #{event}"
+                event = normalize_event_format(event)
                 bot.send(:run_callbacks, event['type'], event)
               end
             end
@@ -130,13 +131,13 @@ module Rebot
       end
 
       def normalize_event_format(event)
-        if event['type'] == 'message_new'
-          event['type'] = 'message'
+        if event['event'] == 'mention' || event['event'] == 'direct_mention'
+          event['event'] = 'mention'
         end
 
-        event['user']    = event['user_uid']
-        event['channel'] = event['channel_uid']
-
+        if event['event'] == 'direct_message'
+          event['event'] = 'dm'
+        end
         event
       end
 
