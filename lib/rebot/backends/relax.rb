@@ -29,16 +29,16 @@ module Rebot
         @add_proc = block
       end
 
-      def add_bot(token, team_id)
+      def add_bot(token)
         if @bots[token.to_sym]
           Rebot.logger.warn "Attempt to add already added bot with token: #{token}"
         else
-          bot = @add_proc.call(token, team_id)
+          bot = @add_proc.call(token)
           Rebot.logger.info "Adding bot with token: #{bot.key}"
           @bots[bot.key.to_sym] = bot
           redis.multi do
-            redis.hset(@bots_key, bot.token, { team_id: bot.team_id, token: bot.token }.to_json)
-            redis.rpush(@outgoing_queue, { type: 'team_added', team_id: bot.team_id }.to_json)
+            redis.hset(@bots_key, bot.token, { token: bot.token }.to_json)
+            redis.rpush(@outgoing_queue, { type: 'bot_added', token: bot.token }.to_json)
           end
         end
       rescue => e
