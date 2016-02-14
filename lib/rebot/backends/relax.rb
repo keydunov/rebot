@@ -53,7 +53,7 @@ module Rebot
       private
 
       def listen_for_relax_events
-        EM.add_periodic_timer(1) do
+        EM.add_periodic_timer(0.1) do
           begin
             event_json = redis.lpop(@incoming_queue)
             if event_json
