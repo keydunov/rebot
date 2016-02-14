@@ -9,12 +9,9 @@ module Rebot
 
         @relax_bots_pubsub  = config.adapter_options[:relax_bots_pubsub]
         @relax_bots_key     = config.adapter_options[:relax_bots_key]
-        @relax_events_queue = config.adapter_options[:relax_events_queue]
-      end
 
-      def next_message_id
-        @next_message_id ||= 0
-        @next_message_id += 1
+        @incoming_queue  = config.adapter_options[:incoming_queue]
+        @outgoing_queue  = config.adapter_options[:outgoing_queue]
       end
 
       def start
@@ -51,28 +48,20 @@ module Rebot
         raise e
       end
 
-      def message(team_id, message)
-        redis.publish(@relax_bots_pubsub, {type: 'message', team_id: team_id, payload: message.merge(id: next_message_id).to_json}.to_json)
+      def message(token, message)
+        redis.rpush(@outgoing_queue, { type: 'message', token: token, message: message }.to_json)
       end
 
       private
 
-      def bots(team_uid)
-        json_bot = redis.hget(@relax_bots_key, team_uid)
-        if json_bot
-          @bots[JSON.parse(json_bot)["token"].to_sym]
-        end
-      end
-
       def listen_for_relax_events
         EM.add_periodic_timer(1) do
           begin
-            event_json = redis.lpop(@relax_events_queue)
+            event_json = redis.lpop(@incoming_queue)
             if event_json
               event = JSON.parse(event_json)
-              if bot = bots(event['team_uid'])
+              if bot = @bots[event['token'].to_sym]
                 Rebot.logger.debug "Received message for bot: #{bot}: #{event}"
-                event = normalize_event_format(event)
                 bot.send(:run_callbacks, event['type'], event)
               end
             end
