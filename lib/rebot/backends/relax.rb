@@ -39,7 +39,7 @@ module Rebot
           unless redis.hexists(@bots_key, bot.token)
             redis.multi do
               redis.hset(@bots_key, bot.token, { token: bot.token }.to_json)
-              redis.rpush(@outgoing_queue, { type: 'bot_added', token: bot.token }.to_json)
+              redis.publish(@outgoing_queue, { type: 'bot_added', token: bot.token }.to_json)
             end
           end
         end
