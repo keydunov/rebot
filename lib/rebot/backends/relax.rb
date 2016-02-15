@@ -49,7 +49,7 @@ module Rebot
       end
 
       def message(token, message)
-        redis.rpush(@outgoing_queue, { type: 'message', token: token, message: message }.to_json)
+        redis.publish(@outgoing_queue, { type: 'message', token: token, message: message }.to_json)
       end
 
       private
