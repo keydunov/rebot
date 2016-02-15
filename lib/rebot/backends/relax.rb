@@ -81,7 +81,6 @@ module Rebot
           rescue => e
             log_error(e)
             # TODO
-            raise e
           end
         end
       end
