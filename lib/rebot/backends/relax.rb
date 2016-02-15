@@ -36,9 +36,11 @@ module Rebot
           bot = @add_proc.call(token)
           Rebot.logger.info "Adding bot with token: #{bot.key}"
           @bots[bot.key.to_sym] = bot
-          redis.multi do
-            redis.hset(@bots_key, bot.token, { token: bot.token }.to_json)
-            redis.rpush(@outgoing_queue, { type: 'bot_added', token: bot.token }.to_json)
+          unless redis.hexists(@bots_key, bot.token)
+            redis.multi do
+              redis.hset(@bots_key, bot.token, { token: bot.token }.to_json)
+              redis.rpush(@outgoing_queue, { type: 'bot_added', token: bot.token }.to_json)
+            end
           end
         end
       rescue => e
