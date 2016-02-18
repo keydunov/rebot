@@ -17,11 +17,8 @@ module Rebot
           @running = true
           listen_for_relax_events
           listen_for_instructions if @queue
+          start_ticking
 
-          # TODO
-          EM.add_periodic_timer(1) do
-            @bots.values.each { |b| b.convos.each { |convo| convo.tick } }
-          end
         end
       end
 
@@ -53,6 +50,17 @@ module Rebot
       end
 
       private
+
+      def start_ticking
+        EM.add_periodic_timer(1) do
+          begin
+            @bots.values.each { |b| b.convos.each { |convo| convo.tick } }
+          rescue => e
+            # TODO
+            log_error(e)
+          end
+        end
+      end
 
       def listen_for_relax_events
         EM.add_periodic_timer(0.1) do
