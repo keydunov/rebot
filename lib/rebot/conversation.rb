@@ -110,8 +110,9 @@ module Rebot
     end
 
     def handle(message)
+      message.conversation = true
       @last_active_at = Time.now
-      Rebot.logger.debug "Handling message in conversation: #{message.text}"
+      Rebot.logger.info "Handling message in conversation: #{message.text}"
 
       if stop_patterns.any? { |sp| message.text.match(Regexp.new(sp, true)) }
         say(text: stop_message, action: "stop")

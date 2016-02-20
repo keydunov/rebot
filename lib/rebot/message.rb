@@ -1,10 +1,15 @@
 module Rebot
   class Message
-    attr_reader :text, :user, :channel, :event
+    attr_reader   :text, :user, :channel, :event
+    attr_accessor :conversation
 
     def initialize(data, bot)
       @data    = data
       @bot     = bot
+
+      # Flag to indicate whether or not
+      # the message is part of conversation
+      @conversation = false
 
       @mention_regex = /\A(<@#{bot.bot_user_id}>)[\s\:](.*)/
 
