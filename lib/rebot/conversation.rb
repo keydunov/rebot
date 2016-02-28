@@ -2,7 +2,7 @@ module Rebot
   class Conversation
     DEFAULT_TIMEOUT = 180 # set default timeout to 180 seconds (3 minutes)
     DEFAULT_TIMEOUT_MESSAGE = "We can pick this up later."
-    DEFAULT_STOP_PATTERNS = ["^exit", "^stop", "^quit"]
+    DEFAULT_STOP_PATTERNS = ["^exit", "^stop", "^quit", "^cancel"]
     DEFAULT_STOP_MESSAGE  = "Ok. Done"
 
     attr_reader :data, :source_message, :bot
