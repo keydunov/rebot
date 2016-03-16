@@ -110,6 +110,8 @@ module Rebot
             when :say
               Rebot.logger.info "[#{bot_key}] say: #{args}"
               bot.say(*args)
+            when :start_conversation
+              bot.start_conversation(*args)
             when :say_to
               user_id, message_data = args
               log "[#{bot_key}] say_to: (#{user_id}) #{message_data}"
