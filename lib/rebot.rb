@@ -3,6 +3,7 @@ require 'logger'
 
 require 'slack_bot_server'
 require 'slack_bot_server/redis_queue'
+require 'slack_bot_server/remote_control'
 
 require "rebot/version"
 
@@ -15,6 +16,12 @@ require "rebot/conversation"
 require 'rebot/backends/relax'
 
 module Rebot
+  class RemoteControl < SlackBotServer::RemoteControl
+    def start_conversation(key, options = nil)
+      @queue.push([:start_conversation, key, options])
+    end
+  end
+
   def self.logger
     @logger ||= Logger.new(STDOUT)
   end
@@ -44,10 +51,10 @@ module Rebot
     @server ||= Server.setup(configuration.compile)
   end
 
+
   def self.remote_control
     @remote_control ||= begin
-      require 'slack_bot_server/remote_control'
-      SlackBotServer::RemoteControl.new(queue: SlackBotServer::RedisQueue.new)
+      RemoteControl.new(queue: SlackBotServer::RedisQueue.new)
     end
   end
 end
