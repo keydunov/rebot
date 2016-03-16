@@ -1,10 +1,15 @@
 module Rebot
   class Message
-    attr_reader :text, :user, :channel, :event
+    attr_reader   :text, :user, :channel, :event
+    attr_accessor :conversation
 
     def initialize(data, bot)
       @data    = data
       @bot     = bot
+
+      # Flag to indicate whether or not
+      # the message is part of conversation
+      @conversation = false
 
       @mention_regex = /\A(<@#{bot.bot_user_id}>)[\s\:](.*)/
 
@@ -26,7 +31,9 @@ module Rebot
 
     def resolve_event(type)
       # set up a couple of special cases based on subtype
-      if @data['subtype'] == 'channel_join'
+      if @data['event']
+        @data['event']
+      elsif @data['subtype'] == 'channel_join'
         if @data['user'] == @bot.bot_user_id
           "bot_channel_join"
         else
